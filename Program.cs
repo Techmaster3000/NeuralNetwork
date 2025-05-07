@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeuralNetworkExample
+namespace NeuralNetworkProject
 {
     class NeuralNetwork
     {
