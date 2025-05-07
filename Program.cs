@@ -52,7 +52,7 @@ namespace NeuralNetworkProject
     {
         static void Main(string[] args)
         {
-            NeuralNetwork nn = new NeuralNetwork(2);
+            NeuralNetwork nn = new NeuralNetwork(4);
 
             // Training data for an AND gate
             double[][] inputs = {
