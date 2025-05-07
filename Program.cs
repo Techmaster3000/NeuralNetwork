@@ -8,6 +8,7 @@ namespace SimpleNeuralNetwork
         private int hiddenSize;
         private int outputSize = 1;
 
+
         private double[,] weightsInputHidden;
         private double[] hiddenBiases;
         private double[] hiddenOutputs;
