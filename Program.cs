@@ -1,49 +1,95 @@
 ﻿using System;
 
-namespace NeuralNetworkProject
+namespace SimpleNeuralNetwork
 {
     class NeuralNetwork
     {
-        private double[] weights;
+        private int inputSize;
+        private int hiddenSize;
+        private int outputSize = 1;
+
+        private double[,] weightsInputHidden;
+        private double[] hiddenBiases;
+        private double[] hiddenOutputs;
+
+        private double[] weightsHiddenOutput;
+        private double outputBias;
+
         private double learningRate;
 
-        public NeuralNetwork(int inputSize, double learningRate = 0.01)
+        public NeuralNetwork(int inputSize, int hiddenSize, double learningRate = 0.1)
         {
+            this.inputSize = inputSize;
+            this.hiddenSize = hiddenSize;
             this.learningRate = learningRate;
-            weights = new double[inputSize];
+
+            weightsInputHidden = new double[inputSize, hiddenSize];
+            hiddenBiases = new double[hiddenSize];
+            hiddenOutputs = new double[hiddenSize];
+
+            weightsHiddenOutput = new double[hiddenSize];
+
             Random rand = new Random();
+            for (int i = 0; i < inputSize; i++)
+                for (int j = 0; j < hiddenSize; j++)
+                    weightsInputHidden[i, j] = rand.NextDouble() * 2 - 1;
 
-            for (int i = 0; i < weights.Length; i++)
+            for (int j = 0; j < hiddenSize; j++)
             {
-                weights[i] = rand.NextDouble() * 2 - 1; // Initialize weights randomly between -1 and 1
+                hiddenBiases[j] = rand.NextDouble() * 2 - 1;
+                weightsHiddenOutput[j] = rand.NextDouble() * 2 - 1;
             }
+
+            outputBias = rand.NextDouble() * 2 - 1;
         }
 
-        public double Activate(double input)
-        {
-            // Sigmoid activation function
-            return 1.0 / (1.0 + Math.Exp(-input));
-        }
+        private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
+        private double SigmoidDerivative(double x) => x * (1 - x);
 
         public double Predict(double[] inputs)
         {
-            double sum = 0;
-            for (int i = 0; i < inputs.Length; i++)
+            // Feedforward
+            for (int j = 0; j < hiddenSize; j++)
             {
-                sum += inputs[i] * weights[i];
+                double sum = 0;
+                for (int i = 0; i < inputSize; i++)
+                    sum += inputs[i] * weightsInputHidden[i, j];
+                sum += hiddenBiases[j];
+                hiddenOutputs[j] = Sigmoid(sum);
             }
-            return Activate(sum);
+
+            double outputSum = 0;
+            for (int j = 0; j < hiddenSize; j++)
+                outputSum += hiddenOutputs[j] * weightsHiddenOutput[j];
+            outputSum += outputBias;
+
+            return Sigmoid(outputSum);
         }
 
         public void Train(double[] inputs, double target)
         {
             double prediction = Predict(inputs);
-            double error = target - prediction;
+            double outputError = target - prediction;
+            double outputGradient = SigmoidDerivative(prediction) * outputError;
 
-            // Update weights using gradient descent
-            for (int i = 0; i < weights.Length; i++)
+            // Update weights from hidden to output
+            for (int j = 0; j < hiddenSize; j++)
             {
-                weights[i] += learningRate * error * inputs[i];
+                weightsHiddenOutput[j] += learningRate * outputGradient * hiddenOutputs[j];
+            }
+            outputBias += learningRate * outputGradient;
+
+            // Backpropagation: hidden layer
+            for (int j = 0; j < hiddenSize; j++)
+            {
+                double hiddenError = outputGradient * weightsHiddenOutput[j];
+                double hiddenGradient = SigmoidDerivative(hiddenOutputs[j]) * hiddenError;
+
+                for (int i = 0; i < inputSize; i++)
+                {
+                    weightsInputHidden[i, j] += learningRate * hiddenGradient * inputs[i];
+                }
+                hiddenBiases[j] += learningRate * hiddenGradient;
             }
         }
     }
@@ -52,32 +98,37 @@ namespace NeuralNetworkProject
     {
         static void Main(string[] args)
         {
-            NeuralNetwork nn = new NeuralNetwork(2);
+            NeuralNetwork nn = new NeuralNetwork(4, 3); // 4 inputs, 3 hidden nodes
 
-            // Training data for an AND gate
+            // Voorbeelddata: XOR-achtig patroon (alleen voor demonstratie)
             double[][] inputs = {
-                new double[] { 0, 0 },
-                new double[] { 0, 1 },
-                new double[] { 1, 0 },
-                new double[] { 1, 1 }
+                new double[] { 0, 0, 0, 0 },
+                new double[] { 0, 1, 0, 1 },
+                new double[] { 1, 0, 1, 0 },
+                new double[] { 1, 1, 0, 0 },
+                new double[] { 1, 1, 1, 1 },
+                new double[] { 0, 0, 1, 1 },
+                new double[] { 1, 0, 0, 1 },
+                new double[] { 0, 1, 1, 0 },
             };
 
-            double[] targets = { 0, 0, 0, 1 };
+            double[] labels = { 0, 0, 1, 1, 1, 0, 1, 0 };
 
-            // Train the neural network
-            for (int epoch = 0; epoch < 10000; epoch++)
+            // Train het netwerk
+            for (int epoch = 0; epoch < 50000; epoch++)
             {
                 for (int i = 0; i < inputs.Length; i++)
                 {
-                    nn.Train(inputs[i], targets[i]);
+                    nn.Train(inputs[i], labels[i]);
                 }
             }
 
-            // Test the neural network
-            Console.WriteLine("Testing Neural Network:");
+            // Testen
+            Console.WriteLine("Testresultaten:");
             foreach (var input in inputs)
             {
-                Console.WriteLine($"Input: {input[0]}, {input[1]} => Output: {nn.Predict(input):F2}");
+                double output = nn.Predict(input);
+                Console.WriteLine($"Input: {string.Join(", ", input)} => Output: {output:F2}");
             }
         }
     }
