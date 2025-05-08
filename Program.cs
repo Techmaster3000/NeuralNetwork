@@ -97,40 +97,40 @@ namespace SimpleNeuralNetwork
 
     class Program
     {
-        static void Main(string[] args)
-        {
-            NeuralNetwork nn = new NeuralNetwork(4, 3); // 4 inputs, 3 hidden nodes
+        //static void Main(string[] args)
+        //{
+        //    NeuralNetwork nn = new NeuralNetwork(4, 3); // 4 inputs, 3 hidden nodes
 
-            // Voorbeelddata: XOR-achtig patroon (alleen voor demonstratie)
-            double[][] inputs = {
-                new double[] { 0, 0, 0, 0 },
-                new double[] { 0, 1, 0, 1 },
-                new double[] { 1, 0, 1, 0 },
-                new double[] { 1, 1, 0, 0 },
-                new double[] { 1, 1, 1, 1 },
-                new double[] { 0, 0, 1, 1 },
-                new double[] { 1, 0, 0, 1 },
-                new double[] { 0, 1, 1, 0 },
-            };
+        //    // Voorbeelddata: XOR-achtig patroon (alleen voor demonstratie)
+        //    double[][] inputs = {
+        //        new double[] { 0, 0, 0, 0 },
+        //        new double[] { 0, 1, 0, 1 },
+        //        new double[] { 1, 0, 1, 0 },
+        //        new double[] { 1, 1, 0, 0 },
+        //        new double[] { 1, 1, 1, 1 },
+        //        new double[] { 0, 0, 1, 1 },
+        //        new double[] { 1, 0, 0, 1 },
+        //        new double[] { 0, 1, 1, 0 },
+        //    };
 
-            double[] labels = { 0, 0, 1, 1, 1, 0, 1, 0 };
+        //    double[] labels = { 0, 0, 1, 1, 1, 0, 1, 0 };
 
-            // Train het netwerk
-            for (int epoch = 0; epoch < 50000; epoch++)
-            {
-                for (int i = 0; i < inputs.Length; i++)
-                {
-                    nn.Train(inputs[i], labels[i]);
-                }
-            }
+        //    // Train het netwerk
+        //    for (int epoch = 0; epoch < 50000; epoch++)
+        //    {
+        //        for (int i = 0; i < inputs.Length; i++)
+        //        {
+        //            nn.Train(inputs[i], labels[i]);
+        //        }
+        //    }
 
-            // Testen
-            Console.WriteLine("Testresultaten:");
-            foreach (var input in inputs)
-            {
-                double output = nn.Predict(input);
-                Console.WriteLine($"Input: {string.Join(", ", input)} => Output: {output:F2}");
-            }
-        }
+        //    // Testen
+        //    Console.WriteLine("Testresultaten:");
+        //    foreach (var input in inputs)
+        //    {
+        //        double output = nn.Predict(input);
+        //        Console.WriteLine($"Input: {string.Join(", ", input)} => Output: {output:F2}");
+        //    }
+        //}
     }
 }
