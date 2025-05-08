@@ -168,7 +168,13 @@ public class Images
 }
 public class imageNetwork
 {
-    public 
+    public void Train()
+    {
+
+    }
+    public void Predict()
+    {
+    }
 
     public static void Main(string[] args)
     {
