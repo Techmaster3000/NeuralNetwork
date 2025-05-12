@@ -282,7 +282,7 @@ namespace NeuralNetwork {
         private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
         private double SigmoidDerivative(double x) => x * (1 - x);
 
-        public imageNetwork(int inputSize = 9, int hiddenSize = 18, int outputSize = 26, double learningRate = 0.1)
+        public imageNetwork(int inputSize = 9, int hiddenSize = 4, int outputSize = 26, double learningRate = 0.1)
         {
             this.inputSize = inputSize;
             this.hiddenSize = hiddenSize;
@@ -355,21 +355,73 @@ namespace NeuralNetwork {
                 for (int j = 0; j < hiddenSize; j++)
                     weightsInputHidden[i, j] += learningRate * hiddenErrors[j] * SigmoidDerivative(hidden[j]) * input[i];
         }
-        public void Predict()
+        public int Predict(double[] input)
 	    {
+            double[] hidden = new double[hiddenSize];
             for (int j = 0; j < hiddenSize; j++)
+                for (int i = 0; i < inputSize; i++)
+                    hidden[j] += input[i] * weightsInputHidden[i, j];
+            for (int j = 0; j < hiddenSize; j++)
+                hidden[j] = Sigmoid(hidden[j]);
+
+            double[] output = new double[outputSize];
+            for (int k = 0; k < outputSize; k++)
+                for (int j = 0; j < hiddenSize; j++)
+                    output[k] += hidden[j] * weightsOutputHidden[j, k];
+            for (int k = 0; k < outputSize; k++)
+                output[k] = Sigmoid(output[k]);
+
+            int maxIndex = 0;
+            for (int k = 1; k < outputSize; k++)
+                if (output[k] > output[maxIndex]) maxIndex = k;
+
+            return maxIndex;
+        }
+
+        public static void Main(string[] args)
+        {
+            ImageSet images = new ImageSet();
+            imageNetwork net = new imageNetwork(3 * 3, hiddenSize: 4, learningRate: 0.1);
+
+            // Training
+            Image[] trainingData = {
+        images.imageH, images.imageO, images.imageU, images.imageD, images.imageC,
+        images.imageX, images.imageY, images.imageDot, images.imageBkslsh, images.imageFwdslsh,
+        images.imageArrowLft, images.imageArrowRgt, images.imageArrowUp, images.imageArrowDwn,
+        images.imageArrowSqrOpen, images.imageArrowSqrClose, images.imageUnderscore, images.imagePlus
+    };
+            Image[] testData = {
+        images.imageH, images.imageO, images.imageU, images.imageD, images.imageC,
+        images.imageX, images.imageY, images.imageDot, images.imageBkslsh, images.imageFwdslsh,
+        images.imageArrowLft, images.imageArrowRgt, images.imageArrowUp, images.imageArrowDwn,
+        images.imageArrowSqrOpen, images.imageArrowSqrClose, images.imageUnderscore, images.imagePlus, images.imageDash, images.imageEqual, images.imageL, images.imageColon, images.imageI,
+        images.imageK, images.imageV, images.image1
+    };
+
+            for (int epoch = 0; epoch < 500; epoch++)
             {
-                double sum = 0;
+                foreach (var img in trainingData)
+                {
+                    double[] input = imageNetwork.Flatten(img.ImgArray);
+                    int targetIndex = Array.IndexOf(imageNetwork.charArray, img.Label);
+                    net.Train(input, targetIndex);
+                }
             }
-	    }
 
-	    public static void Main(string[] args)
-	    {
-		    ImageSet images = new ImageSet();
-		    var x = images.imageO;
-		    Console.WriteLine("Image network initialized.");
-		    Console.WriteLine(x);
+            Console.WriteLine("=== TRAINING COMPLETE ===");
 
-	    }
+            // Testing
+            foreach (var img in testData)
+            {
+                double[] input = imageNetwork.Flatten(img.ImgArray);
+                int prediction = net.Predict(input);
+                char predictedChar = imageNetwork.indexToChar[prediction];
+
+                Console.WriteLine(img);
+                Console.WriteLine($"Expected: {img.Label}, Predicted: {predictedChar}");
+                Console.WriteLine(predictedChar == img.Label ? "✅ Correct" : "❌ Wrong");
+                Console.WriteLine();
+            }
+        }
     }
 }
