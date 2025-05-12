@@ -1,0 +1,26 @@
+[project]
+name = "NeuralNetwork"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Techmaster3000", email = "52240882+Techmaster3000@users.noreply.github.com"},
+]
+dependencies = [
+    "pandas>=2.2.3",
+    "seaborn>=0.13.2",
+    "tensorflow-keras>=0.1",
+    "sklearn>=0.0.post12",
+    "scikit-learn>=1.6.1",
+    "tensorflow>=2.18.1",
+]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = true
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
