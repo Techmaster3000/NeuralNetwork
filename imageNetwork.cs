@@ -19,14 +19,52 @@ namespace NeuralNetwork {
             return output;
         }
     }
-    public class ImageSet
+    public class ImageSet {
+        public static readonly int[,] imgJ =
         {
-            public static readonly int[,] imgH =
+            {0,0,1},
+            {0,0,1},
+            {1,1,1}
+        };
+        public readonly Image imageJ = new Image(imgJ, 'J');
+
+        public static readonly int[,] imgP =
+        {
+            {1,1,1},
+            {1,1,1},
+            {1,0,0}
+        };
+        public readonly Image imageP = new Image(imgP, 'P');
+
+        public static readonly int[,] imgQ =
+        {
+            {1,1,1},
+            {1,0,1},
+            {1,1,0}
+        };
+        public readonly Image imageQ = new Image(imgQ, 'Q');
+        public static readonly int[,] imgA =
             {
-             {1,0,1},
-             {1,1,1},
-             {1,0,1}
+                {0,1,0},
+                {1,0,1},
+                {1,1,1}
             };
+            public readonly Image imageA = new Image(imgA, 'A');
+
+            public static readonly int[,] imgB =
+            {
+                {1,1,0},
+                {1,1,1},
+                {1,1,1}
+    };
+            public readonly Image imageB = new Image(imgB, 'B');
+
+            public static readonly int[,] imgH =
+                {
+                 {1,0,1},
+                 {1,1,1},
+                 {1,0,1}
+                };
             public readonly Image imageH = new Image(imgH, 'H');
 
             public static readonly int[,] imgO =
@@ -247,34 +285,13 @@ namespace NeuralNetwork {
         private double[,] weightsOutputHidden;
         private Random rand = new Random();
 
-        private static char[] charArray = ['H', 'O', 'U', 'D', 'C', 'X', 'Y', '.', '\\', '/', '<', '>', '^', 'v', '[', ']', '_', '+', '-', '=', 'L', ':', 'I', 'K', 'V', '1'];
+        private static char[] charArray = ['J', 'P', 'Q', 'A', 'B', 'H', 'O', 'U', 'D', 'C', 'X', 'Y', '.', '\\', '/', '<', '>', '^', 'v', '[', ']', '_', '+', '-', '=', 'L', ':', 'I', 'K', 'V', '1'];
         private static Dictionary<int, char> indexToChar = new Dictionary<int, char> { 
-            { 0, 'H' },
-            { 1, 'O' },
-            { 2, 'U' },
-            { 3, 'D' },
-            { 4, 'C' },
-            { 5, 'X' },
-            { 6, 'Y' },
-            { 7, '.' },
-            { 8, '\\' },
-            { 9, '/' },
-            { 10, '<' },
-            { 11, '>' },
-            { 12, '^' },
-            { 13, 'v' },
-            { 14, '[' },
-            { 15, ']' },
-            { 16, '_' },
-            { 17, '+' },
-            { 18, '-' },
-            { 19, '=' },
-            { 20, 'L' },
-            { 21, ':' },
-            { 22, 'I' },
-            { 23, 'K' },
-            { 24, 'V' },
-            { 25, '1' }
+            {0, 'J'}, {1, 'P'}, {2, 'Q'}, {3, 'A'}, {4, 'B'}, {5, 'H'}, {6, 'O'}, {7, 'U'},
+            {8, 'D'}, {9, 'C'}, {10, 'X'}, {11, 'Y'}, {12, '.'}, {13, '\\'}, {14, '/'},
+            {15, '<'}, {16, '>'}, {17, '^'}, {18, 'v'}, {19, '['}, {20, ']'}, {21, '_'},
+            {22, '+'}, {23, '-'}, {24, '='}, {25, 'L'}, {26, ':'}, {27, 'I'}, {28, 'K'},
+            {29, 'V'}, {30, '1'}
         };
     //create a dictionary with an int for each char
         private bool[] boolArray = new bool[charArray.Length];
@@ -282,7 +299,7 @@ namespace NeuralNetwork {
         private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
         private double SigmoidDerivative(double x) => x * (1 - x);
 
-        public imageNetwork(int inputSize = 9, int hiddenSize = 4, int outputSize = 26, double learningRate = 0.1)
+        public imageNetwork(int inputSize = 9, int hiddenSize = 4, int outputSize = 26, double learningRate = 0.01)
         {
             this.inputSize = inputSize;
             this.hiddenSize = hiddenSize;
@@ -381,16 +398,18 @@ namespace NeuralNetwork {
         public static void Main(string[] args)
         {
             ImageSet images = new ImageSet();
-            imageNetwork net = new imageNetwork(3 * 3, hiddenSize: 4, learningRate: 0.1);
+            imageNetwork net = new imageNetwork(3 * 3, hiddenSize: 4, learningRate: 0.01);
 
             // Training
             Image[] trainingData = {
+                images.imageJ, images.imageP, images.imageQ, images.imageA, images.imageB,
         images.imageH, images.imageO, images.imageU, images.imageD, images.imageC,
         images.imageX, images.imageY, images.imageDot, images.imageBkslsh, images.imageFwdslsh,
         images.imageArrowLft, images.imageArrowRgt, images.imageArrowUp, images.imageArrowDwn,
         images.imageArrowSqrOpen, images.imageArrowSqrClose, images.imageUnderscore, images.imagePlus
     };
             Image[] testData = {
+        images.imageJ, images.imageP, images.imageQ, images.imageA, images.imageB,
         images.imageH, images.imageO, images.imageU, images.imageD, images.imageC,
         images.imageX, images.imageY, images.imageDot, images.imageBkslsh, images.imageFwdslsh,
         images.imageArrowLft, images.imageArrowRgt, images.imageArrowUp, images.imageArrowDwn,
@@ -398,7 +417,7 @@ namespace NeuralNetwork {
         images.imageK, images.imageV, images.image1
     };
 
-            for (int epoch = 0; epoch < 500; epoch++)
+            for (int epoch = 0; epoch < 5000; epoch++)
             {
                 foreach (var img in trainingData)
                 {
