@@ -292,7 +292,7 @@ namespace NeuralNetwork
         public static void Main(string[] args)
         {
             ImageSetHidden images = new ImageSetHidden();
-            imageNetworkHidden net = new imageNetworkHidden(inputSize: 9, hiddenSize: 16, hiddenSize2: 16, outputSize: 9, learningRate: 0.05); // Increased hidden sizes and learning rate
+            imageNetworkHidden net = new imageNetworkHidden(inputSize: 9, hiddenSize: 16, hiddenSize2: 16, outputSize: 9, learningRate: 0.1); // Increased hidden sizes and learning rate
 
             // Training
             ImageHidden[] trainingData = {
