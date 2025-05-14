@@ -103,7 +103,7 @@ namespace NeuralNetwork
         public static readonly int[,] img2_5 = { { 1, 1, 0 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly ImageHidden image2_5 = new ImageHidden(img2_5, '2');
         public static readonly int[,] img2_6 = { { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 1 } }; public readonly ImageHidden image2_6 = new ImageHidden(img2_6, '2');
         public static readonly int[,] img2_7 = { { 0, 1, 1 }, { 0, 1, 1 }, { 1, 1, 1 } }; public readonly ImageHidden image2_7 = new ImageHidden(img2_7, '2');
-        public static readonly int[,] img2_8 = { { 1, 1, 0 }, { 0, 1, 0 }, { 0, 1, 1 } }; public readonly ImageHidden image2_8 = new ImageHidden(img2_8, '2'); // Rotatie
+        public static readonly int[,] img2_8 = { { 1, 1, 0 }, { 0, 1, 0 }, { 0, 1, 1 } }; public readonly ImageHidden image2_8 =new ImageHidden(img2_8, '2'); // Rotatie
         public static readonly int[,] img2_9 = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, 0, 0 } }; public readonly ImageHidden image2_9 = new ImageHidden(img2_9, '2'); // Verschuiving
         public static readonly int[,] img2_10 = { { 1, 0, 0 }, { 1, 1, 0 }, { 1, 1, 0 } }; public readonly ImageHidden image2_10 = new ImageHidden(img2_10, '2'); // Ruis
 
@@ -139,38 +139,52 @@ namespace NeuralNetwork
     {
         private int inputSize;
         private int hiddenSize;
+        private int hiddenSize2; // Add this field for the second hidden layer
         private int outputSize;
         private double learningRate;
 
-        private double[,] weightsInputHidden;
-        private double[,] weightsOutputHidden;
         private Random rand = new Random();
 
-        private static char[] charArray = { 'A', 'B', 'C', 'D', '1', '2', '3' };
+        private static char[] charArray = { 'A', 'B', 'C', 'D', '1', '2', '3', 'E', 'F' };
         private static Dictionary<int, char> indexToChar = new Dictionary<int, char> {
-            {0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}, {4, '1'}, {5, '2'}, {6, '3'}
+            {0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}, {4, '1'}, {5, '2'}, {6, '3'}, {7, 'E'}, {8, 'F'}
         };
 
         private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
         private double SigmoidDerivative(double x) => x * (1 - x);
 
-        public imageNetworkHidden(int inputSize = 9, int hiddenSize = 12, int outputSize = 7, double learningRate = 0.01)
+        private double[,] weightsInputHidden;
+        private double[,] weightsHidden1Hidden2; // Add this
+        private double[,] weightsHidden2Output; // Add this
+        private double[,] weightsOutputHidden; // You might want to remove this one
+
+        public imageNetworkHidden(int inputSize = 9, int hiddenSize = 12, int hiddenSize2 = 6, int outputSize = 9, double learningRate = 0.01)
         {
             this.inputSize = inputSize;
             this.hiddenSize = hiddenSize;
+            this.hiddenSize2 = hiddenSize2; // Store the size of the second hidden layer
             this.outputSize = outputSize;
             this.learningRate = learningRate;
 
             weightsInputHidden = new double[inputSize, hiddenSize];
-            weightsOutputHidden = new double[hiddenSize, outputSize];
+            weightsHidden1Hidden2 = new double[hiddenSize, hiddenSize2]; // Initialize
+            weightsHidden2Output = new double[hiddenSize2, outputSize]; // Initialize
+                                                                        // weightsOutputHidden = new double[hiddenSize, outputSize]; // You can likely remove this
 
+            // Initialize weightsInputHidden
             for (int i = 0; i < inputSize; i++)
                 for (int j = 0; j < hiddenSize; j++)
                     weightsInputHidden[i, j] = rand.NextDouble() * 2 - 1;
 
+            // Initialize weightsHidden1Hidden2
             for (int i = 0; i < hiddenSize; i++)
+                for (int j = 0; j < hiddenSize2; j++)
+                    weightsHidden1Hidden2[i, j] = rand.NextDouble() * 2 - 1;
+
+            // Initialize weightsHidden2Output
+            for (int i = 0; i < hiddenSize2; i++)
                 for (int j = 0; j < outputSize; j++)
-                    weightsOutputHidden[i, j] = rand.NextDouble() * 2 - 1;
+                    weightsHidden2Output[i, j] = rand.NextDouble() * 2 - 1;
         }
         public static double[] Flatten(int[,] array)
         {
@@ -189,58 +203,84 @@ namespace NeuralNetwork
         public void Train(double[] input, int targetIndex)
         {
             // Forward pass
-            double[] hidden = new double[hiddenSize];
+            double[] hidden1 = new double[hiddenSize];
             for (int j = 0; j < hiddenSize; j++)
                 for (int i = 0; i < inputSize; i++)
-                    hidden[j] += input[i] * weightsInputHidden[i, j];
+                    hidden1[j] += input[i] * weightsInputHidden[i, j];
             for (int j = 0; j < hiddenSize; j++)
-                hidden[j] = Sigmoid(hidden[j]);
+                hidden1[j] = Sigmoid(hidden1[j]);
+
+            double[] hidden2 = new double[hiddenSize2];
+            for (int k = 0; k < hiddenSize2; k++)
+                for (int j = 0; j < hiddenSize; j++)
+                    hidden2[k] += hidden1[j] * weightsHidden1Hidden2[j, k];
+            for (int k = 0; k < hiddenSize2; k++)
+                hidden2[k] = Sigmoid(hidden2[k]);
 
             double[] output = new double[outputSize];
-            for (int k = 0; k < outputSize; k++)
-                for (int j = 0; j < hiddenSize; j++)
-                    output[k] += hidden[j] * weightsOutputHidden[j, k];
-            for (int k = 0; k < outputSize; k++)
-                output[k] = Sigmoid(output[k]);
+            for (int l = 0; l < outputSize; l++)
+                for (int k = 0; k < hiddenSize2; k++)
+                    output[l] += hidden2[k] * weightsHidden2Output[k, l];
+            for (int l = 0; l < outputSize; l++)
+                output[l] = Sigmoid(output[l]);
 
             // Output error
             double[] target = new double[outputSize];
             target[targetIndex] = 1;
             double[] outputErrors = new double[outputSize];
-            for (int k = 0; k < outputSize; k++)
-                outputErrors[k] = (target[k] - output[k]) * SigmoidDerivative(output[k]);
+            for (int l = 0; l < outputSize; l++)
+                outputErrors[l] = (target[l] - output[l]) * SigmoidDerivative(output[l]);
 
-            // Backprop to hidden layer
-            double[] hiddenErrors = new double[hiddenSize];
+            // Backprop to the second hidden layer
+            double[] hidden2Errors = new double[hiddenSize2];
+            for (int k = 0; k < hiddenSize2; k++)
+                for (int l = 0; l < outputSize; l++)
+                    hidden2Errors[k] += outputErrors[l] * weightsHidden2Output[k, l];
+
+            // Backprop to the first hidden layer
+            double[] hidden1Errors = new double[hiddenSize];
             for (int j = 0; j < hiddenSize; j++)
-                for (int k = 0; k < outputSize; k++)
-                    hiddenErrors[j] += outputErrors[k] * weightsOutputHidden[j, k];
+                for (int k = 0; k < hiddenSize2; k++)
+                    hidden1Errors[j] += hidden2Errors[k] * weightsHidden1Hidden2[j, k];
 
-            // Update weights output->hidden
+            // Update weights hidden2->output
+            for (int k = 0; k < hiddenSize2; k++)
+                for (int l = 0; l < outputSize; l++)
+                    weightsHidden2Output[k, l] += learningRate * outputErrors[l] * hidden2[k];
+
+            // Update weights hidden1->hidden2
             for (int j = 0; j < hiddenSize; j++)
-                for (int k = 0; k < outputSize; k++)
-                    weightsOutputHidden[j, k] += learningRate * outputErrors[k] * hidden[j];
+                for (int k = 0; k < hiddenSize2; k++)
+                    weightsHidden1Hidden2[j, k] += learningRate * hidden2Errors[k] * SigmoidDerivative(hidden2[k]) * hidden1[j];
 
-            // Update weights input->hidden
+            // Update weights input->hidden1
             for (int i = 0; i < inputSize; i++)
                 for (int j = 0; j < hiddenSize; j++)
-                    weightsInputHidden[i, j] += learningRate * hiddenErrors[j] * SigmoidDerivative(hidden[j]) * input[i];
+                    weightsInputHidden[i, j] += learningRate * hidden1Errors[j] * SigmoidDerivative(hidden1[j]) * input[i];
         }
+
         public int Predict(double[] input)
         {
-            double[] hidden = new double[hiddenSize];
+            double[] hidden1 = new double[hiddenSize];
             for (int j = 0; j < hiddenSize; j++)
                 for (int i = 0; i < inputSize; i++)
-                    hidden[j] += input[i] * weightsInputHidden[i, j];
+                    hidden1[j] += input[i] * weightsInputHidden[i, j];
             for (int j = 0; j < hiddenSize; j++)
-                hidden[j] = Sigmoid(hidden[j]);
+                hidden1[j] = Sigmoid(hidden1[j]);
+
+            double[] hidden2 = new double[hiddenSize2];
+            for (int k = 0; k < hiddenSize2; k++)
+                for (int j = 0; j < hiddenSize; j++)
+                    hidden2[k] += hidden1[j] * weightsHidden1Hidden2[j, k];
+            for (int k = 0; k < hiddenSize2; k++)
+                hidden2[k] = Sigmoid(hidden2[k]);
 
             double[] output = new double[outputSize];
-            for (int k = 0; k < outputSize; k++)
-                for (int j = 0; j < hiddenSize; j++)
-                    output[k] += hidden[j] * weightsOutputHidden[j, k];
-            for (int k = 0; k < outputSize; k++)
-                output[k] = Sigmoid(output[k]);
+            for (int l = 0; l < outputSize; l++)
+                for (int k = 0; k < hiddenSize2; k++)
+                    output[l] += hidden2[k] * weightsHidden2Output[k, l];
+            for (int l = 0; l < outputSize; l++)
+                output[l] = Sigmoid(output[l]);
 
             int maxIndex = 0;
             for (int k = 1; k < outputSize; k++)
@@ -252,22 +292,24 @@ namespace NeuralNetwork
         public static void Main(string[] args)
         {
             ImageSetHidden images = new ImageSetHidden();
-            imageNetworkHidden net = new imageNetworkHidden(inputSize: 9, hiddenSize: 8, outputSize: 7, learningRate: 0.1);
+            imageNetworkHidden net = new imageNetworkHidden(inputSize: 9, hiddenSize: 16, hiddenSize2: 16, outputSize: 9, learningRate: 0.05); // Increased hidden sizes and learning rate
 
             // Training
             ImageHidden[] trainingData = {
-                images.imageA1, images.imageA2, images.imageA3, images.imageA4, images.imageA5,
-                images.imageB1, images.imageB2, images.imageB3, images.imageB4, images.imageB5,
-                images.imageC1, images.imageC2, images.imageC3, images.imageC4, images.imageC5,
-                images.imageD1, images.imageD2, images.imageD3, images.imageD4, images.imageD5,
-                images.image1_1, images.image1_2, images.image1_3, images.image1_4, images.image1_5,
-                images.image2_1, images.image2_2, images.image2_3, images.image2_4, images.image2_5,
-                images.image3_1, images.image3_2, images.image3_3, images.image3_4, images.image3_5
+                images.imageA1, images.imageA2, images.imageA3, images.imageA4, images.imageA5, images.imageA6, images.imageA7, images.imageA8, images.imageA9, images.imageA10,
+                images.imageB1, images.imageB2, images.imageB3, images.imageB4, images.imageB5, images.imageB6, images.imageB7, images.imageB8, images.imageB9, images.imageB10,
+                images.imageC1, images.imageC2, images.imageC3, images.imageC4, images.imageC5, images.imageC6, images.imageC7, images.imageC8, images.imageC9, images.imageC10,
+                images.imageD1, images.imageD2, images.imageD3, images.imageD4, images.imageD5, images.imageD6, images.imageD7, images.imageD8, images.imageD9, images.imageD10,
+                images.image1_1, images.image1_2, images.image1_3, images.image1_4, images.image1_5, images.image1_6, images.image1_7, images.image1_8, images.image1_9, images.image1_10,
+                images.image2_1, images.image2_2, images.image2_3, images.image2_4, images.image2_5, images.image2_6, images.image2_7, images.image2_8, images.image2_9, images.image2_10,
+                images.image3_1, images.image3_2, images.image3_3, images.image3_4, images.image3_5, images.image3_6, images.image3_7, images.image3_8, images.image3_9, images.image3_10,
+                images.imageE1, images.imageE2, images.imageE3, images.imageE4, images.imageE5, images.imageE6,
+                images.imageF1, images.imageF2, images.imageF3, images.imageF4, images.imageF5, images.imageF6
             };
             ImageHidden[] testData = {
                 images.imageA1, images.imageB1, images.imageC1, images.imageD1,
                 images.image1_1, images.image2_1, images.image3_1,
-                images.imageE1, images.imageE2, images.imageF1, images.imageF2 // Test met E en F
+                images.imageE1, images.imageE2, images.imageF1, images.imageF2
             };
 
             for (int epoch = 0; epoch < 20000; epoch++)
