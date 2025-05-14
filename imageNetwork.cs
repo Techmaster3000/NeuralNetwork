@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace NeuralNetwork { 
+namespace NeuralNetwork
+{
     public class Image
     {
         public int[,] ImgArray { get; set; }
@@ -13,293 +16,140 @@ namespace NeuralNetwork {
 
         public override string ToString()
         {
-            string output = ImgArray[0,0]  + " " + ImgArray[0, 1] + " " + ImgArray[0, 2] + "\n" +
-                            ImgArray[1, 0] + " " + ImgArray[1, 1] + " " + ImgArray[1, 2] + "\n" +
-                            ImgArray[2, 0] + " " + ImgArray[2, 1] + " " + ImgArray[2, 2] + "\n";
+            string output = "";
+            for (int i = 0; i < ImgArray.GetLength(0); i++)
+            {
+                for (int j = 0; j < ImgArray.GetLength(1); j++)
+                {
+                    output += ImgArray[i, j] + " ";
+                }
+                output += "\n";
+            }
             return output;
         }
     }
-    public class ImageSet {
-        public static readonly int[,] imgJ =
-        {
-            {0,0,1},
-            {0,0,1},
-            {1,1,1}
-        };
-        public readonly Image imageJ = new Image(imgJ, 'J');
+    public class ImageSet
+     {
+        // Letter A variaties
+        public static readonly int[,] imgA1 = { { 0, 1, 0 }, { 1, 0, 1 }, { 1, 1, 1 } }; public readonly Image imageA1 = new Image(imgA1, 'A');
+        public static readonly int[,] imgA2 = { { 1, 1, 0 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageA2 = new Image(imgA2, 'A');
+        public static readonly int[,] imgA3 = { { 0, 1, 1 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageA3 = new Image(imgA3, 'A');
+        public static readonly int[,] imgA4 = { { 0, 0, 1 }, { 0, 1, 0 }, { 1, 1, 1 } }; public readonly Image imageA4 = new Image(imgA4, 'A');
+        public static readonly int[,] imgA5 = { { 1, 0, 0 }, { 0, 1, 0 }, { 1, 1, 1 } }; public readonly Image imageA5 = new Image(imgA5, 'A');
+        public static readonly int[,] imgA6 = { { 0, 1, 0 }, { 1, 1, 0 }, { 1, 0, 0 } }; public readonly Image imageA6 = new Image(imgA6, 'A');
+        public static readonly int[,] imgA7 = { { 0, 0, 0 }, { 1, 1, 1 }, { 0, 0, 0 } }; public readonly Image imageA7 = new Image(imgA7, 'A');
+        public static readonly int[,] imgA8 = { { 0, 1, 0 }, { 0, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageA8 = new Image(imgA8, 'A'); // Rotatie
+        public static readonly int[,] imgA9 = { { 1, 0, 0 }, { 1, 1, 0 }, { 1, 0, 0 } }; public readonly Image imageA9 = new Image(imgA9, 'A'); // Verschuiving
+        public static readonly int[,] imgA10 = { { 0, 1, 0 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageA10 = new Image(imgA10, 'A'); // Ruis
 
-        public static readonly int[,] imgP =
-        {
-            {1,1,1},
-            {1,1,1},
-            {1,0,0}
-        };
-        public readonly Image imageP = new Image(imgP, 'P');
+        // Letter B variaties
+        public static readonly int[,] imgB1 = { { 1, 1, 0 }, { 1, 1, 1 }, { 1, 0, 0 } }; public readonly Image imageB1 = new Image(imgB1, 'B');
+        public static readonly int[,] imgB2 = { { 1, 0, 0 }, { 1, 1, 1 }, { 1, 1, 0 } }; public readonly Image imageB2 = new Image(imgB2, 'B');
+        public static readonly int[,] imgB3 = { { 1, 1, 1 }, { 1, 0, 1 }, { 1, 1, 1 } }; public readonly Image imageB3 = new Image(imgB3, 'B');
+        public static readonly int[,] imgB4 = { { 1, 1, 0 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageB4 = new Image(imgB4, 'B');
+        public static readonly int[,] imgB5 = { { 1, 0, 1 }, { 1, 1, 0 }, { 1, 0, 1 } }; public readonly Image imageB5 = new Image(imgB5, 'B');
+        public static readonly int[,] imgB6 = { { 1, 0, 0 }, { 1, 1, 0 }, { 1, 0, 0 } }; public readonly Image imageB6 = new Image(imgB6, 'B');
+        public static readonly int[,] imgB7 = { { 1, 1, 0 }, { 1, 0, 0 }, { 1, 1, 0 } }; public readonly Image imageB7 = new Image(imgB7, 'B');
+        public static readonly int[,] imgB8 = { { 0, 1, 1 }, { 1, 1, 0 }, { 1, 0, 0 } }; public readonly Image imageB8 = new Image(imgB8, 'B'); // Rotatie
+        public static readonly int[,] imgB9 = { { 0, 0, 1 }, { 1, 1, 1 }, { 0, 0, 1 } }; public readonly Image imageB9 = new Image(imgB9, 'B'); // Verschuiving
+        public static readonly int[,] imgB10 = { { 1, 1, 0 }, { 1, 1, 0 }, { 1, 0, 1 } }; public readonly Image imageB10 = new Image(imgB10, 'B'); // Ruis
 
-        public static readonly int[,] imgQ =
-        {
-            {1,1,1},
-            {1,0,1},
-            {1,1,0}
-        };
-        public readonly Image imageQ = new Image(imgQ, 'Q');
-        public static readonly int[,] imgA =
-            {
-                {0,1,0},
-                {1,0,1},
-                {1,1,1}
-            };
-            public readonly Image imageA = new Image(imgA, 'A');
+        // Letter C variaties
+        public static readonly int[,] imgC1 = { { 1, 1, 1 }, { 1, 0, 0 }, { 1, 1, 1 } }; public readonly Image imageC1 = new Image(imgC1, 'C');
+        public static readonly int[,] imgC2 = { { 0, 1, 1 }, { 1, 0, 0 }, { 1, 1, 0 } }; public readonly Image imageC2 = new Image(imgC2, 'C');
+        public static readonly int[,] imgC3 = { { 1, 1, 0 }, { 1, 0, 0 }, { 0, 1, 1 } }; public readonly Image imageC3 = new Image(imgC3, 'C');
+        public static readonly int[,] imgC4 = { { 1, 0, 1 }, { 1, 0, 0 }, { 1, 0, 1 } }; public readonly Image imageC4 = new Image(imgC4, 'C');
+        public static readonly int[,] imgC5 = { { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 } }; public readonly Image imageC5 = new Image(imgC5, 'C');
+        public static readonly int[,] imgC6 = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, 1, 1 } }; public readonly Image imageC6 = new Image(imgC6, 'C');
+        public static readonly int[,] imgC7 = { { 1, 1, 0 }, { 1, 0, 0 }, { 1, 1, 0 } }; public readonly Image imageC7 = new Image(imgC7, 'C');
+        public static readonly int[,] imgC8 = { { 1, 1, 1 }, { 1, 0, 1 }, { 1, 0, 0 } }; public readonly Image imageC8 = new Image(imgC8, 'C'); // Rotatie
+        public static readonly int[,] imgC9 = { { 0, 1, 1 }, { 0, 0, 0 }, { 0, 1, 1 } }; public readonly Image imageC9 = new Image(imgC9, 'C'); // Verschuiving
+        public static readonly int[,] imgC10 = { { 1, 1, 0 }, { 1, 0, 0 }, { 0, 1, 0 } }; public readonly Image imageC10 = new Image(imgC10, 'C'); // Ruis
 
-            public static readonly int[,] imgB =
-            {
-                {1,1,0},
-                {1,1,1},
-                {1,1,1}
-    };
-            public readonly Image imageB = new Image(imgB, 'B');
+        // Letter D variaties
+        public static readonly int[,] imgD1 = { { 1, 1, 0 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageD1 = new Image(imgD1, 'D');
+        public static readonly int[,] imgD2 = { { 1, 0, 1 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageD2 = new Image(imgD2, 'D');
+        public static readonly int[,] imgD3 = { { 0, 1, 1 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageD3 = new Image(imgD3, 'D');
+        public static readonly int[,] imgD4 = { { 1, 1, 0 }, { 0, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageD4 = new Image(imgD4, 'D');
+        public static readonly int[,] imgD5 = { { 1, 1, 1 }, { 1, 0, 0 }, { 1, 1, 1 } }; public readonly Image imageD5 = new Image(imgD5, 'D');
+        public static readonly int[,] imgD6 = { { 1, 0, 0 }, { 1, 0, 1 }, { 1, 1, 1 } }; public readonly Image imageD6 = new Image(imgD6, 'D');
+        public static readonly int[,] imgD7 = { { 1, 1, 0 }, { 0, 0, 1 }, { 0, 1, 1 } }; public readonly Image imageD7 = new Image(imgD7, 'D');
+        public static readonly int[,] imgD8 = { { 1, 1, 0 }, { 1, 0, 1 }, { 0, 1, 1 } }; public readonly Image imageD8 = new Image(imgD8, 'D'); // Rotatie
+        public static readonly int[,] imgD9 = { { 0, 0, 1 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image imageD9 = new Image(imgD9, 'D'); // Verschuiving
+        public static readonly int[,] imgD10 = { { 1, 1, 0 }, { 0, 0, 1 }, { 1, 0, 1 } }; public readonly Image imageD10 = new Image(imgD10, 'D'); // Ruis
 
-            public static readonly int[,] imgH =
-                {
-                 {1,0,1},
-                 {1,1,1},
-                 {1,0,1}
-                };
-            public readonly Image imageH = new Image(imgH, 'H');
+        // Cijfer 1 variaties
+        public static readonly int[,] img1_1 = { { 0, 1, 0 }, { 0, 1, 0 }, { 0, 1, 0 } }; public readonly Image image1_1 = new Image(img1_1, '1');
+        public static readonly int[,] img1_2 = { { 1, 1, 0 }, { 0, 1, 0 }, { 0, 1, 0 } }; public readonly Image image1_2 = new Image(img1_2, '1');
+        public static readonly int[,] img1_3 = { { 0, 1, 1 }, { 0, 1, 0 }, { 0, 1, 0 } }; public readonly Image image1_3 = new Image(img1_3, '1');
+        public static readonly int[,] img1_4 = { { 0, 1, 0 }, { 1, 1, 0 }, { 0, 1, 0 } }; public readonly Image image1_4 = new Image(img1_4, '1');
+        public static readonly int[,] img1_5 = { { 0, 1, 0 }, { 0, 1, 1 }, { 0, 1, 0 } }; public readonly Image image1_5 = new Image(img1_5, '1');
+        public static readonly int[,] img1_6 = { { 1, 1, 1 }, { 0, 1, 0 }, { 0, 1, 0 } }; public readonly Image image1_6 = new Image(img1_6, '1');
+        public static readonly int[,] img1_7 = { { 0, 0, 1 }, { 0, 0, 1 }, { 0, 0, 1 } }; public readonly Image image1_7 = new Image(img1_7, '1');
+        public static readonly int[,] img1_8 = { { 0, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 } }; public readonly Image image1_8 = new Image(img1_8, '1'); // Rotatie
+        public static readonly int[,] img1_9 = { { 0, 0, 0 }, { 1, 1, 1 }, { 0, 0, 0 } }; public readonly Image image1_9 = new Image(img1_9, '1'); // Verschuiving
+        public static readonly int[,] img1_10 = { { 0, 1, 0 }, { 0, 1, 0 }, { 1, 1, 0 } }; public readonly Image image1_10 = new Image(img1_10, '1'); // Ruis
 
-            public static readonly int[,] imgO =
-            {
-             {1,1,1},
-             {1,0,1},
-             {1,1,1}
-            };
-            public readonly Image imageO = new Image(imgO, 'O');
+        // Cijfer 2 variaties
+        public static readonly int[,] img2_1 = { { 1, 1, 0 }, { 0, 1, 0 }, { 1, 1, 1 } }; public readonly Image image2_1 = new Image(img2_1, '2');
+        public static readonly int[,] img2_2 = { { 1, 0, 1 }, { 1, 1, 0 }, { 0, 1, 1 } }; public readonly Image image2_2 = new Image(img2_2, '2');
+        public static readonly int[,] img2_3 = { { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 } }; public readonly Image image2_3 = new Image(img2_3, '2');
+        public static readonly int[,] img2_4 = { { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 1 } }; public readonly Image image2_4 = new Image(img2_4, '2');
+        public static readonly int[,] img2_5 = { { 1, 1, 0 }, { 1, 0, 1 }, { 1, 1, 0 } }; public readonly Image image2_5 = new Image(img2_5, '2');
+        public static readonly int[,] img2_6 = { { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 1 } }; public readonly Image image2_6 = new Image(img2_6, '2');
+        public static readonly int[,] img2_7 = { { 0, 1, 1 }, { 0, 1, 1 }, { 1, 1, 1 } }; public readonly Image image2_7 = new Image(img2_7, '2');
+        public static readonly int[,] img2_8 = { { 1, 1, 0 }, { 0, 1, 0 }, { 0, 1, 1 } }; public readonly Image image2_8 = new Image(img2_8, '2'); // Rotatie
+        public static readonly int[,] img2_9 = { { 0, 1, 1 }, { 0, 0, 1 }, { 0, 0, 0 } }; public readonly Image image2_9 = new Image(img2_9, '2'); // Verschuiving
+        public static readonly int[,] img2_10 = { { 1, 0, 0 }, { 1, 1, 0 }, { 1, 1, 0 } }; public readonly Image image2_10 = new Image(img2_10, '2'); // Ruis
 
-            public static readonly int[,] imgT =
-            {
-             {1,1,1},
-             {0,1,0},
-             {0,1,0}
-            };
-            public static readonly int[,] imgU =
-            {
-             {1,0,1},
-             {1,0,1},
-             {1,1,1}
-            };
-            public readonly Image imageU = new Image(imgU, 'U');
+        // Cijfer 3 variaties
+        public static readonly int[,] img3_1 = { { 1, 1, 0 }, { 0, 1, 0 }, { 1, 1, 0 } }; public readonly Image image3_1 = new Image(img3_1, '3');
+        public static readonly int[,] img3_2 = { { 1, 0, 1 }, { 0, 1, 0 }, { 1, 0, 1 } }; public readonly Image image3_2 = new Image(img3_2, '3');
+        public static readonly int[,] img3_3 = { { 1, 1, 1 }, { 0, 0, 1 }, { 1, 1, 1 } }; public readonly Image image3_3 = new Image(img3_3, '3');
+        public static readonly int[,] img3_4 = { { 0, 1, 1 }, { 0, 1, 0 }, { 1, 1, 0 } }; public readonly Image image3_4 = new Image(img3_4, '3');
+        public static readonly int[,] img3_5 = { { 1, 1, 0 }, { 1, 0, 0 }, { 1, 1, 0 } }; public readonly Image image3_5 = new Image(img3_5, '3');
+        public static readonly int[,] img3_6 = { { 1, 0, 1 }, { 0, 1, 0 }, { 1, 1, 0 } }; public readonly Image image3_6 = new Image(img3_6, '3');
+        public static readonly int[,] img3_7 = { { 1, 1, 1 }, { 0, 0, 0 }, { 1, 1, 1 } }; public readonly Image image3_7 = new Image(img3_7, '3');
+        public static readonly int[,] img3_8 = { { 1, 1, 0 }, { 0, 1, 0 }, { 0, 1, 1 } }; public readonly Image image3_8 = new Image(img3_8, '3'); // Rotatie
+        public static readonly int[,] img3_9 = { { 0, 0, 1 }, { 0, 1, 0 }, { 0, 0, 1 } }; public readonly Image image3_9 = new Image(img3_9, '3'); // Verschuiving
+        public static readonly int[,] img3_10 = { { 1, 0, 0 }, { 0, 1, 0 }, { 1, 1, 0 } }; public readonly Image image3_10 = new Image(img3_10, '3'); // Ruis
 
-            public static readonly int[,] imgD =
-            {
-             {1,1,0},
-             {1,0,1},
-             {1,1,0}
-            };
-            public readonly Image imageD = new Image(imgD, 'D');
+        //Letter E
+        public static readonly int[,] imgE1 = { { 1, 1, 1 }, { 1, 0, 0 }, { 1, 1, 1 } }; public readonly Image imageE1 = new Image(imgE1, 'E');
+        public static readonly int[,] imgE2 = { { 1, 0, 0 }, { 1, 1, 0 }, { 1, 0, 0 } }; public readonly Image imageE2 = new Image(imgE2, 'E');
+        public static readonly int[,] imgE3 = { { 1, 1, 1 }, { 1, 0, 1 }, { 1, 1, 1 } }; public readonly Image imageE3 = new Image(imgE3, 'E');
+        public static readonly int[,] imgE4 = { { 1, 0, 0 }, { 1, 1, 1 }, { 1, 0, 0 } }; public readonly Image imageE4 = new Image(imgE4, 'E');
+        public static readonly int[,] imgE5 = { { 1, 1, 0 }, { 1, 0, 0 }, { 1, 1, 0 } }; public readonly Image imageE5 = new Image(imgE5, 'E'); // Nieuw
+        public static readonly int[,] imgE6 = { { 1, 0, 0 }, { 1, 0, 0 }, { 1, 0, 0 } }; public readonly Image imageE6 = new Image(imgE6, 'E'); // Nieuw
 
-            public static readonly int[,] imgC =
-            {
-             {1,1,1},
-             {1,0,0},
-             {1,1,1}
-            };
-            public readonly Image imageC = new Image(imgC, 'C');
-
-
-            public static readonly int[,] imgX =
-            {
-             {1,0,1},
-             {0,1,0},
-             {1,0,1}
-            };
-            public readonly Image imageX = new Image(imgX, 'X');
-
-            public static readonly int[,] imgY =
-            {
-             {1,0,1},
-             {0,1,0},
-             {0,1,0}
-            };
-            public readonly Image imageY = new Image(imgY, 'Y');
-
-            public static readonly int[,] imgDot =
-            {
-             {0,0,0},
-             {0,1,0},
-             {0,0,0}
-            };
-            public readonly Image imageDot = new Image(imgDot, '.');
-
-            public static readonly int[,] imgBkslsh =
-            {
-             {1,0,0},
-             {0,1,0},
-             {0,0,1}
-            };
-            public readonly Image imageBkslsh = new Image(imgBkslsh, '\\');
-
-            public static readonly int[,] imgFwdslsh =
-            {
-             {0,0,1},
-             {0,1,0},
-             {1,0,0}
-            };
-            public readonly Image imageFwdslsh = new Image(imgFwdslsh, '/');
-
-            public static readonly int[,] imgArrowLft =
-            {
-             {0,1,0},
-             {1,0,0},
-             {0,1,0}
-            };
-            public readonly Image imageArrowLft = new Image(imgArrowLft, '<');
-
-            public static readonly int[,] imgArrowRgt =
-            {
-             {0,1,0},
-             {0,0,1},
-             {0,1,0}
-            };
-            public readonly Image imageArrowRgt = new Image(imgArrowRgt, '>');
-
-            public static readonly int[,] imgArrowUp =
-            {
-             {0,1,0},
-             {1,0,1},
-             {0,0,0}
-            };
-            public readonly Image imageArrowUp = new Image(imgArrowUp, '^');
-
-            public static readonly int[,] imgArrowDwn =
-            {
-             {0,0,0},
-             {1,0,1},
-             {0,1,0}
-            };
-            public readonly Image imageArrowDwn = new Image(imgArrowDwn, 'v');
-
-            public static readonly int[,] imgArrowSqrOpen =
-            {
-             {1,1,0},
-             {1,0,0},
-             {1,1,0}
-            };
-            public readonly Image imageArrowSqrOpen = new Image(imgArrowSqrOpen, '[');
-
-            public static readonly int[,] imgArrowSqrClose =
-            {
-             {0,1,1},
-             {0,0,1},
-             {0,1,1}
-            };
-            public readonly Image imageArrowSqrClose = new Image(imgArrowSqrClose, ']');
-
-            public static readonly int[,] imgUnderscore =
-            {
-             {0,0,0},
-             {0,0,0},
-             {1,1,1}
-            };
-            public readonly Image imageUnderscore = new Image(imgUnderscore, '_');
-
-            public static readonly int[,] imgPlus =
-            {
-             {0,1,0},
-             {1,1,1},
-             {0,1,0}
-            };
-            public readonly Image imagePlus = new Image(imgPlus, '+');
-
-            public static readonly int[,] imgDash =
-            {
-             {0,0,0},
-             {1,1,1},
-             {0,0,0}
-            };
-            public readonly Image imageDash = new Image(imgDash, '-');
-
-            public static readonly int[,] imgEqual =
-            {
-             {1,1,1},
-             {0,0,0},
-             {1,1,1}
-            };
-            public readonly Image imageEqual = new Image(imgEqual, '=');
-
-            public static readonly int[,] imgL =
-            {
-             {1,0,0},
-             {1,0,0},
-             {1,1,1}
-            };
-            public readonly Image imageL = new Image(imgL, 'L');
-
-            public static readonly int[,] imgColon =
-            {
-             {0,1,0},
-             {0,0,0},
-             {0,1,0}
-            };
-            public readonly Image imageColon = new Image(imgColon, ':');
-
-            public static readonly int[,] imgI =
-            {
-             {0,1,0},
-             {0,1,0},
-             {0,1,0}
-            };
-            public readonly Image imageI = new Image(imgI, 'I');
-
-            public static readonly int[,] imgK =
-            {
-             {1,0,1},
-             {1,1,0},
-             {1,0,1}
-            };
-            public readonly Image imageK = new Image(imgK, 'K');
-
-            public static readonly int[,] imgV =
-            {
-             {1,0,1},
-             {1,0,1},
-             {0,1,0}
-            };
-            public readonly Image imageV = new Image(imgV, 'V');
-
-            public static readonly int[,] img1 =
-            {
-             {1,1,0},
-             {0,1,0},
-             {1,1,1}
-            };
-            public readonly Image image1 = new Image(img1, '1');
-        }
-    public class imageNetwork {
-
+        //Letter F
+        public static readonly int[,] imgF1 = { { 1, 1, 1 }, { 1, 0, 0 }, { 1, 0, 0 } }; public readonly Image imageF1 = new Image(imgF1, 'F');
+        public static readonly int[,] imgF2 = { { 1, 0, 0 }, { 1, 1, 0 }, { 1, 0, 0 } }; public readonly Image imageF2 = new Image(imgF2, 'F');
+        public static readonly int[,] imgF3 = { { 1, 1, 1 }, { 1, 0, 1 }, { 1, 0, 0 } }; public readonly Image imageF3 = new Image(imgF3, 'F');
+        public static readonly int[,] imgF4 = { { 1, 0, 0 }, { 1, 1, 1 }, { 1, 0, 0 } }; public readonly Image imageF4 = new Image(imgF4, 'F');
+        public static readonly int[,] imgF5 = { { 1, 1, 0 }, { 1, 0, 0 }, { 1, 0, 0 } }; public readonly Image imageF5 = new Image(imgF5, 'F'); // Nieuw
+        public static readonly int[,] imgF6 = { { 1, 0, 0 }, { 1, 0, 0 }, { 1, 0, 1 } }; public readonly Image imageF6 = new Image(imgF6, 'F'); // Nieuw
+    }
+    public class imageNetwork
+    {
         private int inputSize;
         private int hiddenSize;
-        private int outputSize = 1;
+        private int outputSize;
         private double learningRate;
 
         private double[,] weightsInputHidden;
         private double[,] weightsOutputHidden;
         private Random rand = new Random();
 
-        private static char[] charArray = ['J', 'P', 'Q', 'A', 'B', 'H', 'O', 'U', 'D', 'C', 'X', 'Y', '.', '\\', '/', '<', '>', '^', 'v', '[', ']', '_', '+', '-', '=', 'L', ':', 'I', 'K', 'V', '1'];
-        private static Dictionary<int, char> indexToChar = new Dictionary<int, char> { 
-            {0, 'J'}, {1, 'P'}, {2, 'Q'}, {3, 'A'}, {4, 'B'}, {5, 'H'}, {6, 'O'}, {7, 'U'},
-            {8, 'D'}, {9, 'C'}, {10, 'X'}, {11, 'Y'}, {12, '.'}, {13, '\\'}, {14, '/'},
-            {15, '<'}, {16, '>'}, {17, '^'}, {18, 'v'}, {19, '['}, {20, ']'}, {21, '_'},
-            {22, '+'}, {23, '-'}, {24, '='}, {25, 'L'}, {26, ':'}, {27, 'I'}, {28, 'K'},
-            {29, 'V'}, {30, '1'}
+        private static char[] charArray = { 'A', 'B', 'C', 'D', '1', '2', '3' };
+        private static Dictionary<int, char> indexToChar = new Dictionary<int, char> {
+            {0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}, {4, '1'}, {5, '2'}, {6, '3'}
         };
-    //create a dictionary with an int for each char
-        private bool[] boolArray = new bool[charArray.Length];
 
         private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
         private double SigmoidDerivative(double x) => x * (1 - x);
 
-        public imageNetwork(int inputSize = 9, int hiddenSize = 4, int outputSize = 26, double learningRate = 0.01)
+        public imageNetwork(int inputSize = 9, int hiddenSize = 12, int outputSize = 7, double learningRate = 0.01)
         {
             this.inputSize = inputSize;
             this.hiddenSize = hiddenSize;
@@ -317,18 +167,17 @@ namespace NeuralNetwork {
                 for (int j = 0; j < outputSize; j++)
                     weightsOutputHidden[i, j] = rand.NextDouble() * 2 - 1;
         }
-        /// <summary>
-        /// Convert the 2D Binary images to a 1D array of doubles.
-        /// </summary>
-        /// <param name="array">The 3x3 image composed of binary values</param>
-        /// <returns>The inputted image as a 1D array of doubles </returns>
         public static double[] Flatten(int[,] array)
         {
-            double[] flat = new double[9];
+            double[] flat = new double[array.GetLength(0) * array.GetLength(1)];
             int index = 0;
-            for (int i = 0; i < 3; i++)
-                for (int j = 0; j < 3; j++)
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
                     flat[index++] = array[i, j];
+                }
+            }
             return flat;
         }
 
@@ -373,7 +222,7 @@ namespace NeuralNetwork {
                     weightsInputHidden[i, j] += learningRate * hiddenErrors[j] * SigmoidDerivative(hidden[j]) * input[i];
         }
         public int Predict(double[] input)
-	    {
+        {
             double[] hidden = new double[hiddenSize];
             for (int j = 0; j < hiddenSize; j++)
                 for (int i = 0; i < inputSize; i++)
@@ -398,26 +247,25 @@ namespace NeuralNetwork {
         public static void Main(string[] args)
         {
             ImageSet images = new ImageSet();
-            imageNetwork net = new imageNetwork(3 * 3, hiddenSize: 4, learningRate: 0.01);
+            imageNetwork net = new imageNetwork(inputSize: 9, hiddenSize: 8, outputSize: 7, learningRate: 0.1);
 
             // Training
             Image[] trainingData = {
-                images.imageJ, images.imageP, images.imageQ, images.imageA, images.imageB,
-        images.imageH, images.imageO, images.imageU, images.imageD, images.imageC,
-        images.imageX, images.imageY, images.imageDot, images.imageBkslsh, images.imageFwdslsh,
-        images.imageArrowLft, images.imageArrowRgt, images.imageArrowUp, images.imageArrowDwn,
-        images.imageArrowSqrOpen, images.imageArrowSqrClose, images.imageUnderscore, images.imagePlus
-    };
+                images.imageA1, images.imageA2, images.imageA3, images.imageA4, images.imageA5,
+                images.imageB1, images.imageB2, images.imageB3, images.imageB4, images.imageB5,
+                images.imageC1, images.imageC2, images.imageC3, images.imageC4, images.imageC5,
+                images.imageD1, images.imageD2, images.imageD3, images.imageD4, images.imageD5,
+                images.image1_1, images.image1_2, images.image1_3, images.image1_4, images.image1_5,
+                images.image2_1, images.image2_2, images.image2_3, images.image2_4, images.image2_5,
+                images.image3_1, images.image3_2, images.image3_3, images.image3_4, images.image3_5
+            };
             Image[] testData = {
-        images.imageJ, images.imageP, images.imageQ, images.imageA, images.imageB,
-        images.imageH, images.imageO, images.imageU, images.imageD, images.imageC,
-        images.imageX, images.imageY, images.imageDot, images.imageBkslsh, images.imageFwdslsh,
-        images.imageArrowLft, images.imageArrowRgt, images.imageArrowUp, images.imageArrowDwn,
-        images.imageArrowSqrOpen, images.imageArrowSqrClose, images.imageUnderscore, images.imagePlus, images.imageDash, images.imageEqual, images.imageL, images.imageColon, images.imageI,
-        images.imageK, images.imageV, images.image1
-    };
+                images.imageA1, images.imageB1, images.imageC1, images.imageD1,
+                images.image1_1, images.image2_1, images.image3_1,
+                images.imageE1, images.imageE2, images.imageF1, images.imageF2 // Test met E en F
+            };
 
-            for (int epoch = 0; epoch < 5000; epoch++)
+            for (int epoch = 0; epoch < 20000; epoch++)
             {
                 foreach (var img in trainingData)
                 {
@@ -425,22 +273,40 @@ namespace NeuralNetwork {
                     int targetIndex = Array.IndexOf(imageNetwork.charArray, img.Label);
                     net.Train(input, targetIndex);
                 }
+                if (epoch % 1000 == 0)
+                {
+                    Console.WriteLine($"Epoch: {epoch}");
+                }
             }
 
             Console.WriteLine("=== TRAINING COMPLETE ===");
 
             // Testing
+            int correctPredictions = 0;
             foreach (var img in testData)
             {
                 double[] input = imageNetwork.Flatten(img.ImgArray);
                 int prediction = net.Predict(input);
-                char predictedChar = imageNetwork.indexToChar[prediction];
-
+                char predictedChar;
+                if (prediction < imageNetwork.indexToChar.Count)
+                    predictedChar = imageNetwork.indexToChar[prediction];
+                else
+                    predictedChar = '?'; // Voor onbekende letters
                 Console.WriteLine(img);
-                Console.WriteLine($"Expected: {img.Label}, Predicted: {predictedChar}");
-                Console.WriteLine(predictedChar == img.Label ? "✅ Correct" : "❌ Wrong");
+                Console.WriteLine($"Verwacht: {img.Label}, Voorspeld: {predictedChar}");
+                if (predictedChar == img.Label)
+                {
+                    Console.WriteLine("✅ Correct");
+                    correctPredictions++;
+                }
+                else
+                {
+                    Console.WriteLine("❌ Fout");
+                }
                 Console.WriteLine();
             }
+            Console.WriteLine($"Correcte voorspellingen: {correctPredictions} van de {testData.Length}");
+            Console.WriteLine($"Accuracy: {(double)correctPredictions / testData.Length * 100:F2}%");
         }
     }
 }
