@@ -4,14 +4,19 @@ using System.Linq;
 
 namespace NeuralNetwork
 {
-    public class Image
+    public class ImageHidden
     {
-        public int[,] ImgArray { get; set; }
-        public char Label { get; set; }
-        public Image(int[,] array, char label)
+        private int[,] _imgArray; // Backing field for the property
+        public int[,] ImgArray
         {
-            ImgArray = array;
-            Label = label;
+            get { return _imgArray; }
+            set { _imgArray = value; }
+        }
+        public char Label { get; set; }
+        public ImageHidden(int[,] array, char lbl)
+        {
+            this._imgArray = array;
+            this.Label = lbl;
         }
 
         public override string ToString()
@@ -28,7 +33,7 @@ namespace NeuralNetwork
             return output;
         }
     }
-    public class ImageSet
+    public class ImageSetHidden
     {
         // Letter A variaties
         public static readonly int[,] imgA1 = { { 0, 1, 0 }, { 1, 0, 1 }, { 1, 1, 1 } }; public readonly Image imageA1 = new Image(imgA1, 'A');
@@ -130,50 +135,42 @@ namespace NeuralNetwork
         public static readonly int[,] imgF5 = { { 1, 1, 0 }, { 1, 0, 0 }, { 1, 0, 0 } }; public readonly Image imageF5 = new Image(imgF5, 'F'); // Nieuw
         public static readonly int[,] imgF6 = { { 1, 0, 0 }, { 1, 0, 0 }, { 1, 0, 1 } }; public readonly Image imageF6 = new Image(imgF6, 'F'); // Nieuw
     }
-    public class imageNetwork
+    public class imageNetworkHidden
     {
         private int inputSize;
-        private int hiddenSize1;
-        private int hiddenSize2;
+        private int hiddenSize;
         private int outputSize;
         private double learningRate;
 
-        private double[,] weightsInputHidden1;
-        private double[,] weightsHidden1Hidden2;
-        private double[,] weightsOutputHidden2;
+        private double[,] weightsInputHidden;
+        private double[,] weightsOutputHidden;
         private Random rand = new Random();
 
-        private static char[] charArray = { 'A', 'B', 'C', 'D', '1', '2', '3', 'E', 'F' }; // Added E and F
+        private static char[] charArray = { 'A', 'B', 'C', 'D', '1', '2', '3' };
         private static Dictionary<int, char> indexToChar = new Dictionary<int, char> {
-            {0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}, {4, '1'}, {5, '2'}, {6, '3'}, {7, 'E'}, {8, 'F'} // Added E and F
+            {0, 'A'}, {1, 'B'}, {2, 'C'}, {3, 'D'}, {4, '1'}, {5, '2'}, {6, '3'}
         };
 
         private double Sigmoid(double x) => 1.0 / (1.0 + Math.Exp(-x));
         private double SigmoidDerivative(double x) => x * (1 - x);
 
-        public imageNetwork(int inputSize = 9, int hiddenSize1 = 10, int hiddenSize2 = 5, int outputSize = 9, double learningRate = 0.01) // Adjusted outputSize
+        public imageNetworkHidden(int inputSize = 9, int hiddenSize = 12, int outputSize = 7, double learningRate = 0.01)
         {
             this.inputSize = inputSize;
-            this.hiddenSize1 = hiddenSize1;
-            this.hiddenSize2 = hiddenSize2;
+            this.hiddenSize = hiddenSize;
             this.outputSize = outputSize;
             this.learningRate = learningRate;
 
-            weightsInputHidden1 = new double[inputSize, hiddenSize1];
-            weightsHidden1Hidden2 = new double[hiddenSize1, hiddenSize2];
-            weightsOutputHidden2 = new double[hiddenSize2, outputSize];
+            weightsInputHidden = new double[inputSize, hiddenSize];
+            weightsOutputHidden = new double[hiddenSize, outputSize];
 
             for (int i = 0; i < inputSize; i++)
-                for (int j = 0; j < hiddenSize1; j++)
-                    weightsInputHidden1[i, j] = rand.NextDouble() * 2 - 1;
+                for (int j = 0; j < hiddenSize; j++)
+                    weightsInputHidden[i, j] = rand.NextDouble() * 2 - 1;
 
-            for (int i = 0; i < hiddenSize1; i++)
-                for (int j = 0; j < hiddenSize2; j++)
-                    weightsHidden1Hidden2[i, j] = rand.NextDouble() * 2 - 1;
-
-            for (int i = 0; i < hiddenSize2; i++)
+            for (int i = 0; i < hiddenSize; i++)
                 for (int j = 0; j < outputSize; j++)
-                    weightsOutputHidden2[i, j] = rand.NextDouble() * 2 - 1;
+                    weightsOutputHidden[i, j] = rand.NextDouble() * 2 - 1;
         }
         public static double[] Flatten(int[,] array)
         {
@@ -181,7 +178,8 @@ namespace NeuralNetwork
             int index = 0;
             for (int i = 0; i < array.GetLength(0); i++)
             {
-                for (int j = 0; j < array.GetLength(1); j++){
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
                     flat[index++] = array[i, j];
                 }
             }
@@ -191,24 +189,17 @@ namespace NeuralNetwork
         public void Train(double[] input, int targetIndex)
         {
             // Forward pass
-            double[] hidden1 = new double[hiddenSize1];
-            for (int j = 0; j < hiddenSize1; j++)
+            double[] hidden = new double[hiddenSize];
+            for (int j = 0; j < hiddenSize; j++)
                 for (int i = 0; i < inputSize; i++)
-                    hidden1[j] += input[i] * weightsInputHidden1[i, j];
-            for (int j = 0; j < hiddenSize1; j++)
-                hidden1[j] = Sigmoid(hidden1[j]);
-
-            double[] hidden2 = new double[hiddenSize2];
-            for (int k = 0; k < hiddenSize2; k++)
-                for (int j = 0; j < hiddenSize1; j++)
-                    hidden2[k] += hidden1[j] * weightsHidden1Hidden2[j, k];
-            for (int k = 0; k < hiddenSize2; k++)
-                hidden2[k] = Sigmoid(hidden2[k]);
+                    hidden[j] += input[i] * weightsInputHidden[i, j];
+            for (int j = 0; j < hiddenSize; j++)
+                hidden[j] = Sigmoid(hidden[j]);
 
             double[] output = new double[outputSize];
             for (int k = 0; k < outputSize; k++)
-                for (int j = 0; j < hiddenSize2; j++)
-                    output[k] += hidden2[j] * weightsOutputHidden2[j, k];
+                for (int j = 0; j < hiddenSize; j++)
+                    output[k] += hidden[j] * weightsOutputHidden[j, k];
             for (int k = 0; k < outputSize; k++)
                 output[k] = Sigmoid(output[k]);
 
@@ -219,53 +210,35 @@ namespace NeuralNetwork
             for (int k = 0; k < outputSize; k++)
                 outputErrors[k] = (target[k] - output[k]) * SigmoidDerivative(output[k]);
 
-            // Backprop to hidden layer 2
-            double[] hidden2Errors = new double[hiddenSize2];
-            for (int j = 0; j < hiddenSize2; j++)
+            // Backprop to hidden layer
+            double[] hiddenErrors = new double[hiddenSize];
+            for (int j = 0; j < hiddenSize; j++)
                 for (int k = 0; k < outputSize; k++)
-                    hidden2Errors[j] += outputErrors[k] * weightsOutputHidden2[j, k];
+                    hiddenErrors[j] += outputErrors[k] * weightsOutputHidden[j, k];
 
-            // Backprop to hidden layer 1
-            double[] hidden1Errors = new double[hiddenSize1];
-            for (int j = 0; j < hiddenSize1; j++)
-                for (int k = 0; k < hiddenSize2; k++)
-                    hidden1Errors[j] += hidden2Errors[k] * weightsHidden1Hidden2[j, k];
-
-            // Update weights output->hidden2
-            for (int j = 0; j < hiddenSize2; j++)
+            // Update weights output->hidden
+            for (int j = 0; j < hiddenSize; j++)
                 for (int k = 0; k < outputSize; k++)
-                    weightsOutputHidden2[j, k] += learningRate * outputErrors[k] * hidden2[j];
+                    weightsOutputHidden[j, k] += learningRate * outputErrors[k] * hidden[j];
 
-            // Update weights hidden2->hidden1
-            for (int i = 0; i < hiddenSize1; i++)
-                for (int j = 0; j < hiddenSize2; j++)
-                    weightsHidden1Hidden2[i, j] += learningRate * hidden2Errors[j] * SigmoidDerivative(hidden2[j]) * hidden1[i];
-
-            // Update weights input->hidden1
+            // Update weights input->hidden
             for (int i = 0; i < inputSize; i++)
-                for (int j = 0; j < hiddenSize1; j++)
-                    weightsInputHidden1[i, j] += learningRate * hidden1Errors[j] * SigmoidDerivative(hidden1[j]) * input[i];
+                for (int j = 0; j < hiddenSize; j++)
+                    weightsInputHidden[i, j] += learningRate * hiddenErrors[j] * SigmoidDerivative(hidden[j]) * input[i];
         }
         public int Predict(double[] input)
         {
-            double[] hidden1 = new double[hiddenSize1];
-            for (int j = 0; j < hiddenSize1; j++)
+            double[] hidden = new double[hiddenSize];
+            for (int j = 0; j < hiddenSize; j++)
                 for (int i = 0; i < inputSize; i++)
-                    hidden1[j] += input[i] * weightsInputHidden1[i, j];
-            for (int j = 0; j < hiddenSize1; j++)
-                hidden1[j] = Sigmoid(hidden1[j]);
-
-            double[] hidden2 = new double[hiddenSize2];
-            for (int k = 0; k < hiddenSize2; k++)
-                for (int j = 0; j < hiddenSize1; j++)
-                    hidden2[k] += hidden1[j] * weightsHidden1Hidden2[j, k];
-            for (int k = 0; k < hiddenSize2; k++)
-                hidden2[k] = Sigmoid(hidden2[k]);
+                    hidden[j] += input[i] * weightsInputHidden[i, j];
+            for (int j = 0; j < hiddenSize; j++)
+                hidden[j] = Sigmoid(hidden[j]);
 
             double[] output = new double[outputSize];
             for (int k = 0; k < outputSize; k++)
-                for (int j = 0; j < hiddenSize2; j++)
-                    output[k] += hidden2[j] * weightsOutputHidden2[j, k];
+                for (int j = 0; j < hiddenSize; j++)
+                    output[k] += hidden[j] * weightsOutputHidden[j, k];
             for (int k = 0; k < outputSize; k++)
                 output[k] = Sigmoid(output[k]);
 
@@ -279,7 +252,7 @@ namespace NeuralNetwork
         public static void Main(string[] args)
         {
             ImageSet images = new ImageSet();
-            imageNetwork net = new imageNetwork(inputSize: 9, hiddenSize1: 12, hiddenSize2: 6, outputSize: 9, learningRate: 0.1); // Adjusted outputSize to 9
+            imageNetwork net = new imageNetwork(inputSize: 9, hiddenSize: 8, outputSize: 7, learningRate: 0.1);
 
             // Training
             Image[] trainingData = {
@@ -289,14 +262,12 @@ namespace NeuralNetwork
                 images.imageD1, images.imageD2, images.imageD3, images.imageD4, images.imageD5,
                 images.image1_1, images.image1_2, images.image1_3, images.image1_4, images.image1_5,
                 images.image2_1, images.image2_2, images.image2_3, images.image2_4, images.image2_5,
-                images.image3_1, images.image3_2, images.image3_3, images.image3_4, images.image3_5,
-                images.imageE1, images.imageE2, images.imageE3, images.imageE4, images.imageE5, // Added E
-                images.imageF1, images.imageF2, images.imageF3, images.imageF4, images.imageF5  // Added F
+                images.image3_1, images.image3_2, images.image3_3, images.image3_4, images.image3_5
             };
             Image[] testData = {
                 images.imageA1, images.imageB1, images.imageC1, images.imageD1,
                 images.image1_1, images.image2_1, images.image3_1,
-                images.imageE1, images.imageE2, images.imageF1, images.imageF2
+                images.imageE1, images.imageE2, images.imageF1, images.imageF2 // Test met E en F
             };
 
             for (int epoch = 0; epoch < 20000; epoch++)
@@ -341,70 +312,6 @@ namespace NeuralNetwork
             }
             Console.WriteLine($"Correcte voorspellingen: {correctPredictions} van de {testData.Length}");
             Console.WriteLine($"Accuracy: {(double)correctPredictions / testData.Length * 100:F2}%");
-
-            // Test with noisy data
-            Console.WriteLine("\n=== TESTING WITH NOISY DATA ===");
-            int noisyCorrectPredictions = 0;
-            foreach (var img in testData)
-            {
-                double[] noisyInput = AddNoise(imageNetwork.Flatten(img.ImgArray), 0.2); // 20% noise
-                int prediction = net.Predict(noisyInput);
-                char predictedChar;
-                 if (prediction < imageNetwork.indexToChar.Count)
-                    predictedChar = imageNetwork.indexToChar[prediction];
-                else
-                    predictedChar = '?';
-                Console.WriteLine("Original Image:\n" + img);
-                Console.WriteLine("Noisy Image:\n" + NoisyArrayToString(noisyInput)); //Custom Noisy print
-                Console.WriteLine($"Verwacht: {img.Label}, Voorspeld: {predictedChar}");
-                if (predictedChar == img.Label)
-                {
-                    Console.WriteLine("✅ Correct");
-                    noisyCorrectPredictions++;
-                }
-                else
-                {
-                    Console.WriteLine("❌ Fout");
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine($"Correcte voorspellingen (noisy data): {noisyCorrectPredictions} van de {testData.Length}");
-            Console.WriteLine($"Noisy Accuracy: {(double)noisyCorrectPredictions / testData.Length * 100:F2}%");
-        }
-
-        // Function to add noise to input data
-        static double[] AddNoise(double[] input, double noiseLevel)
-        {
-            double[] noisyInput = new double[input.Length];
-            Random rand = new Random();
-            for (int i = 0; i < input.Length; i++)
-            {
-                if (rand.NextDouble() < noiseLevel)
-                {
-                    // Flip the pixel value
-                    noisyInput[i] = 1 - input[i];
-                }
-                else
-                {
-                    noisyInput[i] = input[i];
-                }
-            }
-            return noisyInput;
-        }
-
-        // Function to convert noisy input to string
-        static string NoisyArrayToString(double[] array)
-        {
-            string output = "";
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    output += (int)array[i * 3 + j] + " ";
-                }
-                output += "\n";
-            }
-            return output;
         }
     }
 }

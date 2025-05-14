@@ -6,12 +6,17 @@ namespace NeuralNetwork
 {
     public class Image
     {
-        public int[,] ImgArray { get; set; }
-        public char Label { get; set; }
-        public Image(int[,] Array, char label)
+        private int[,] _imgArray; // Backing field for the property
+        public int[,] ImgArray
         {
-            ImgArray = Array;
-            Label = label;
+            get { return _imgArray; }
+            set { _imgArray = value; }
+        }
+        public char Label { get; set; }
+        public Image(int[,] array, char lbl)
+        {
+            this._imgArray = array;
+            this.Label = lbl;
         }
 
         public override string ToString()
