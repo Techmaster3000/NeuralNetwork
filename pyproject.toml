@@ -12,6 +12,9 @@ dependencies = [
     "sklearn>=0.0.post12",
     "scikit-learn>=1.6.1",
     "tensorflow>=2.18.1",
+    "kagglehub>=0.3.12",
+    "kaggle>=1.7.4.5",
+    "ipykernel>=6.29.5",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
