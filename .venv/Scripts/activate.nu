@@ -32,7 +32,7 @@ export-env {
       }
     }
 
-    let virtual_env = r#'C:\Users\jagro\source\repos\NeuralNetwork\.venv'#
+    let virtual_env = r#'C:\Users\joema\Documenten\School\Jaar_2\DEDS\NeuralNetwork\.venv'#
     let bin = r#'Scripts'#
 
     let is_windows = ($nu.os-info.family) == 'windows'
