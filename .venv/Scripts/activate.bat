@@ -5,7 +5,7 @@
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-@set "VIRTUAL_ENV=C:\Users\joema\Documenten\School\Jaar_2\DEDS\NeuralNetwork\.venv"
+@set "VIRTUAL_ENV=C:\Users\jagro\source\repos\NeuralNetwork\.venv"
 
 @set "VIRTUAL_ENV_PROMPT=neuralnetwork-3.13"
 @if NOT DEFINED VIRTUAL_ENV_PROMPT (
