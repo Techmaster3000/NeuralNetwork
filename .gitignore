@@ -16,7 +16,7 @@
 .pdm-build/
 
 #venv
-.venv
+.venv/
 venv/
 venv.bak/
 
