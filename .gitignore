@@ -15,9 +15,8 @@
 .pdm-python
 .pdm-build/
 
-#venv
+# venv
 .venv/
-venv/
 venv.bak/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
